@@ -316,7 +316,7 @@ const QUESTION_BANK = [
    2. КОНФИГУРАЦИЯ
 ════════════════════════════════════════════════════════════ */
 // Вставьте сюда ваш URL от Google Apps Script
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/ВАШ_НОВЫЙ_URL_ЗДЕСЬ/exec'; 
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1knpoSmfoCx_YNlmgWbHRgsQnfHHJxs6U2rMMYVglh5y__kKTsu1Htav-BWLMihnW/exec'; 
 const PASS_THRESHOLD = 0.85;
 const TOTAL_QUESTIONS = 20; // Сколько вопросов выпадает на тест
 
