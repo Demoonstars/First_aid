@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Итоговый тест по действиям при угрозе БПЛА" />
-  <title>Итоговый тест — Действия при угрозе БПЛА</title>
+  <meta name="description" content="Итоговый тест по оказанию первой помощи пострадавшим" />
+  <title>Итоговый тест — Первая помощь</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
   .back-to-course {
@@ -76,37 +76,32 @@
 </style>
 </head>
 <body>
-  <a href="https://demoonstars.github.io/ot-training-portal/course-bpla.html"
-   class="back-to-course"
-   aria-label="Вернуться к материалам курса">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-       stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-    <path d="M19 12H5M12 19l-7-7 7-7"/>
-  </svg>
-  <span class="back-to-course-text">К курсу</span>
-</a>
+  <a href="https://demoonstars.github.io/ot-training-portal/course-first-aid.html" class="back-to-course" aria-label="Вернуться к материалам курса">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    <span class="back-to-course-text">К курсу</span>
+  </a>
 
   <!-- СЦЕНА 1: Приветствие -->
   <section id="scene-welcome" class="scene active" aria-label="Приветствие" role="main">
     <div class="scene-inner welcome-inner">
       <div class="welcome-icon" aria-hidden="true">
         <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="40" cy="40" r="40" fill="#fef3c7"/> <!-- Желтый фон -->
-          <path d="M40 15L55 25V45C55 55 40 65 40 65C40 65 25 55 25 45V25L40 15Z" fill="#d97706"/>
-          <path d="M40 30V45M40 52V55" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
-          <path d="M25 20L15 10M55 20L65 10" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="40" cy="40" r="40" fill="#dcfce7"/>
+          <path d="M40 20V60M20 40H60" stroke="#16a34a" stroke-width="10" stroke-linecap="round"/>
         </svg>
       </div>
-      <h1 class="welcome-title">Итоговый тест: Угроза БПЛА</h1>
-      <p class="welcome-subtitle">Проверьте свои знания по алгоритмам действий при атаке беспилотников</p>
+      <h1 class="welcome-title">Итоговый тест: Первая помощь</h1>
+      <p class="welcome-subtitle">Проверьте свои знания алгоритмов спасения жизни</p>
       <p class="welcome-description">
-        Этот тест предназначен для проверки знаний после прохождения вводного инструктажа по действиям при угрозе БПЛА.
-        Убедитесь, что вы внимательно изучили материалы перед началом тестирования.
+        Этот тест предназначен для закрепления знаний по курсу «Первая помощь без мифов и паники». 
+        В тесте собраны реальные рабочие ситуации. Читайте объяснения после каждого ответа, чтобы запомнить, как действовать правильно.
       </p>
       <div class="welcome-meta">
         <div class="meta-item"><span class="meta-icon" aria-hidden="true">📋</span><span>20 вопросов</span></div>
         <div class="meta-item"><span class="meta-icon" aria-hidden="true">✅</span><span>Порог сдачи — 85%</span></div>
-        <div class="meta-item"><span class="meta-icon" aria-hidden="true">⏱</span><span>~10–15 минут</span></div>
+        <div class="meta-item"><span class="meta-icon" aria-hidden="true">⏱</span><span>~15 минут</span></div>
       </div>
       <button class="btn btn-primary btn-large" id="btn-start" type="button">
         Начать тест <span class="btn-arrow" aria-hidden="true">→</span>
@@ -123,21 +118,14 @@
       </div>
       <div class="consent-box" role="document" aria-label="Текст согласия">
         <h3 class="consent-box-title">Уважаемый участник тестирования!</h3>
-        <p>В соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных»
-        настоящим подтверждаю своё согласие на обработку моих персональных данных
-        (фамилия, имя, отчество, дата рождения, наименование организации, должность,
-        подразделение, дата трудоустройства) в целях:</p>
+        <p>В соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных» настоящим подтверждаю своё согласие на обработку моих персональных данных (фамилия, имя, отчество, дата рождения, наименование организации, должность, подразделение, дата трудоустройства) в целях:</p>
         <ul>
-          <li>проведения тестирования по действиям при угрозе БПЛА;</li>
+          <li>проведения тестирования по оказанию первой помощи;</li>
           <li>записи и хранения результатов тестирования;</li>
           <li>подтверждения факта прохождения инструктажа.</li>
         </ul>
-        <p>Обработка персональных данных осуществляется в объёме, необходимом для достижения
-        указанных целей. Данные хранятся в защищённой электронной системе и не передаются
-        третьим лицам без вашего согласия, за исключением случаев, предусмотренных
-        действующим законодательством РФ.</p>
-        <p>Согласие может быть отозвано в любой момент путём письменного обращения
-        к ответственному за безопасность.</p>
+        <p>Обработка персональных данных осуществляется в объёме, необходимом для достижения указанных целей. Данные хранятся в защищённой электронной системе и не передаются третьим лицам без вашего согласия.</p>
+        <p>Согласие может быть отозвано в любой момент путём письменного обращения к ответственному за безопасность.</p>
       </div>
       <label class="consent-check-label" for="consent-checkbox">
         <input type="checkbox" id="consent-checkbox" class="consent-checkbox" aria-describedby="consent-desc" />
@@ -201,19 +189,20 @@
           <span class="step-badge">Шаг 3 из 3</span>
           <span class="quiz-counter" id="quiz-counter" aria-live="polite">Вопрос 1 из 20</span>
         </div>
-        <div class="progress-bar-track" role="progressbar"
-          aria-valuemin="0" aria-valuemax="20" aria-valuenow="0" id="progress-bar-track">
+        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0" id="progress-bar-track">
           <div class="progress-bar-fill" id="progress-bar-fill"></div>
         </div>
       </div>
       <div class="question-card" id="question-card">
         <p class="question-number" id="question-number" aria-hidden="true">01</p>
         <h2 class="question-text" id="question-text"></h2>
-        <div class="options-list" id="options-list" role="radiogroup" aria-labelledby="question-text"></div>
+        <div class="options-list" id="options-list" role="group" aria-labelledby="question-text"></div>
+        <!-- Блок для объяснения -->
+        <div class="explanation-box" id="explanation-box" style="display: none;"></div>
       </div>
       <div class="quiz-nav">
         <button class="btn btn-primary btn-large" id="btn-next" type="button" disabled aria-disabled="true">
-          <span id="btn-next-label">Далее</span>
+          <span id="btn-next-label">Ответить</span>
           <span class="btn-arrow" aria-hidden="true">&#x2192;</span>
         </button>
       </div>
@@ -230,8 +219,7 @@
         <div class="result-score-circle" id="result-score-circle">
           <svg class="score-ring" viewBox="0 0 120 120" aria-hidden="true">
             <circle class="score-ring-bg" cx="60" cy="60" r="50"/>
-            <circle class="score-ring-fill" id="score-ring-fill" cx="60" cy="60" r="50"
-              stroke-dasharray="314" stroke-dashoffset="314"/>
+            <circle class="score-ring-fill" id="score-ring-fill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"/>
           </svg>
           <div class="score-ring-label">
             <span class="score-number" id="score-number">0</span>
