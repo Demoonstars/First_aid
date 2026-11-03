@@ -1,598 +1,325 @@
-/**
- * app.js — SPA «Итоговый тест: Первая помощь»
- * Доработано: рандомизация, банк из 30 вопросов, подробные объяснения.
- */
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Итоговый тест по оказанию первой помощи пострадавшим" />
+  <title>Итоговый тест — Первая помощь</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* 
+      Дополнительные стили для обучающих элементов (объяснения, чекбоксы).
+      Встроены сюда, чтобы гарантировать работу, даже если styles.css 
+      остался от старой версии.
+    */
 
-/* ════════════════════════════════════════════════════════════
-   1. БАНК ВОПРОСОВ (30 вопросов)
-   Источник: Лекция «Первая помощь без мифов и паники» + тест
-   id — для перемешивания, correctIndex — индекс правильного ответа в исходном массиве
-════════════════════════════════════════════════════════════ */
-const QUESTION_BANK = [
-  // --- Тема 1. Право, безопасность, вызов ---
-  {
-    id: 'q1',
-    text: 'Какие меры собственной безопасности нужно соблюдать, если пострадавший агрессивен? Выберите два верных варианта.',
-    options: [
-      'Не оказывать помощь, если это опасно',
-      'Сообщить о таком человеке в полицию',
-      'Громко и уверенно попросить уйти',
-      'Пообещать, что все будет хорошо'
-    ],
-    correctIndex: [0, 1], // Множественный выбор
-    explanation: '✅ **Верно:** Ваша жизнь в приоритете. Если человек агрессивен и вы рискуете собой, помощь оказывать не нужно. Правильно — отойти на безопасное расстояние и сообщить в полицию. <br><br>❌ **Неверно:** Уговаривать («Пообещать, что все будет хорошо») или пытаться командовать («Попросить уйти») человека в состоянии шока и агрессии — опасно и неэффективно.'
-  },
-  {
-    id: 'q2',
-    text: 'Что необходимо сделать, прежде чем оказать первую помощь пострадавшему?',
-    options: [
-      'Осмотреть место происшествия',
-      'Сообщить руководителю о несчастном случае',
-      'Позвать коллег',
-      'Сразу приступить к проверке пульса'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Первое и абсолютное правило — **оценить обстановку**. Убедитесь, что вам ничего не угрожает (искрящий кабель, падающие конструкции, газ). Мертвый спасатель не поможет. <br><br>❌ **Неверно:** Звонок руководителю или коллегам — вторично. Бежать сразу к пострадавшему без оценки рисков — прямой путь стать вторым пострадавшим.'
-  },
-  {
-    id: 'q3',
-    text: 'Вы вызвали скорую, но не можете дозвониться до руководителя. Можно ли приступить к оказанию первой помощи?',
-    options: [
-      'Да, могу. Чем быстрее начну, тем выше шансы на спасение',
-      'Нет, сначала нужно сообщить руководителю'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Жизнь человека важнее субординации. При клинической смерти счёт идёт на минуты. Начинайте помощь немедленно, а руководству доложите сразу после устранения непосредственной угрозы. <br><br>❌ **Неверно:** Ожидание ответа начальника может стоить человеку жизни.'
-  },
-  {
-    id: 'q4',
-    text: 'Какую информацию необходимо сообщить диспетчеру скорой помощи? Выберите два самых критичных пункта.',
-    options: [
-      'Точный адрес и количество пострадавших',
-      'Свой диагноз и версию происшествия',
-      'Что произошло и контакты для связи',
-      'Время происшествия и должность пострадавшего'
-    ],
-    correctIndex: [0, 2], // Точный адрес, что произошло, контакты (в лекции акцент на адрес+количество, но и "что" тоже важно)
-    explanation: '✅ **Верно:** Диспетчеру жизненно необходимы **точный адрес**, **что случилось** и **ваш контактный телефон**. Количество пострадавших также критично, чтобы прислали нужное число бригад. <br><br>❌ **Неверно:** Не ставьте диагнозы по телефону. Должность и время происшествия — вторичны.'
-  },
-  // --- Тема 2. СЛР и бессознательные состояния ---
-  {
-    id: 'q5',
-    text: 'Как определить, что пострадавший без сознания?',
-    options: [
-      'Он не двигается',
-      'Он не реагирует на голос и встряхивание за плечи',
-      'Он ничего не хочет',
-      'Он не дышит'
-    ],
-    correctIndex: 1,
-    explanation: '✅ **Верно:** Главный признак — **отсутствие реакции на внешние раздражители** (голос, лёгкое встряхивание). <br><br>❌ **Неверно:** Отсутствие движения — не показатель (человек может спать). Отсутствие дыхания — признак клинической смерти, а не просто бессознательного состояния.'
-  },
-  {
-    id: 'q6',
-    text: 'Стоит ли проверять дыхание пострадавшего с помощью зеркальца или перышка?',
-    options: [
-      'Да, это точный и проверенный метод',
-      'Нет. Есть риск неправильно оценить состояние пострадавшего'
-    ],
-    correctIndex: 1,
-    explanation: '✅ **Верно:** Это смертельно опасный миф из кино. Зеркало может запотеть от ваших рук, а перышко сдует ветер. Вы потеряете драгоценное время. <br><br>❌ **Неверно:** Единственный надёжный способ — **«Слышу, ощущаю, вижу»** в течение 10 секунд после запрокидывания головы.'
-  },
-  {
-    id: 'q7',
-    text: 'Установите правильную последовательность проверки дыхания у пострадавшего без сознания.',
-    options: [
-      'Запрокинуть голову → наклониться и слушать/смотреть 10 сек',
-      'Наклониться и слушать → запрокинуть голову',
-      'Проверить пульс на запястье → проверить дыхание',
-      'Похлопать по щекам → проверить дыхание'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** **Сначала** нужно восстановить проходимость дыхательных путей (запрокинуть голову, поднять подбородок), иначе корень языка перекроет горло. **Только потом** наклоняться и проверять дыхание (слух, осязание, зрение). <br><br>❌ **Неверно:** Проверка пульса на запястье при падении давления бессмысленна. Пощёчины — бесполезная и опасная трата времени.'
-  },
-  {
-    id: 'q8',
-    text: 'Что нужно сделать при обмороке? Выберите два верных варианта.',
-    options: [
-      'Положить на спину, поднять ноги выше головы, открыть окна',
-      'Ударить по щекам и растереть уши',
-      'Вызвать скорую, контролировать пульс',
-      'Полить водой'
-    ],
-    correctIndex: [0, 2],
-    explanation: '✅ **Верно:** При обмороке мозгу не хватает крови. Нужно **поднять ноги**, чтобы кровь прилила к голове, и обеспечить **приток кислорода**. Обязательно вызвать скорую и следить за состоянием. <br><br>❌ **Неверно:** Пощёчины, растирания и обливание водой — бесполезные и потенциально опасные действия из фильмов.'
-  },
-  {
-    id: 'q9',
-    text: 'В каких случаях стоит предполагать наступление комы? Выберите два верных варианта.',
-    options: [
-      'Пострадавший потерял сознание на ваших глазах, прошло более 4 минут',
-      'Вы не были очевидцем и не знаете, сколько прошло времени',
-      'Пострадавший потерял сознание менее 4 минут назад',
-      'Пострадавший просто крепко спит'
-    ],
-    correctIndex: [0, 1],
-    explanation: '✅ **Верно:** Грань между обмороком и комой — время. Если без сознания **больше 4 минут** или **время неизвестно** — всегда предполагайте кому и немедленно вызывайте медиков. <br><br>❌ **Неверно:** Если прошло меньше 4 минут, это может быть обморок, но наблюдать всё равно нужно.'
-  },
-  {
-    id: 'q10',
-    text: 'До какого момента нужно проводить сердечно-лёгочную реанимацию (СЛР)? Выберите несколько вариантов.',
-    options: [
-      'Пока не приедет скорая',
-      'Пока не появится пульс',
-      'Пока есть собственные силы',
-      'Пока не пройдёт 4–8 минут',
-      'Пока вы считаете нужным'
-    ],
-    correctIndex: [0, 1, 2],
-    explanation: '✅ **Верно:** СЛР проводится до приезда профессионалов, до восстановления самостоятельного кровообращения (пульса) или пока у вас есть силы. <br><br>❌ **Неверно:** Ориентироваться на время (4–8 минут) или «считать нужным» — неверно. Мозг без кислорода живёт 4–5 минут, но реанимация может продолжаться дольше.'
-  },
-  {
-    id: 'q11',
-    text: 'В каких случаях НЕ появляются трупные пятна, даже если человек мёртв? Выберите три варианта.',
-    options: [
-      'Пострадавший лежит на морозе',
-      'У пострадавшего много переломов',
-      'Пострадавший утонул',
-      'Пострадавший потерял много крови'
-    ],
-    correctIndex: [0, 2, 3],
-    explanation: '✅ **Верно:** Трупные пятна не появляются при **переохлаждении**, **утоплении** и **массивной кровопотере**. В этих случаях человек может выглядеть очень бледным, но его всё ещё можно спасти. Начинайте реанимацию! <br><br>❌ **Неверно:** Множественные переломы не препятствуют появлению трупных пятен.'
-  },
-  // --- Тема 3. Кровотечения и раны ---
-  {
-    id: 'q12',
-    text: 'Какие две главные опасности связаны с любым сильным кровотечением?',
-    options: [
-      'Потеря крови',
-      'Занесение инфекции',
-      'Невозможность наложить повязку',
-      'Порча одежды'
-    ],
-    correctIndex: [0, 1],
-    explanation: '✅ **Верно:** Смертельные опасности — **потеря крови** (падение давления) и **инфекция**. Именно поэтому главная задача — остановить утечку и закрыть рану. <br><br>❌ **Неверно:** Порча одежды и сложности с повязкой — не смертельные угрозы.'
-  },
-  {
-    id: 'q13',
-    text: 'Как отличить артериальное кровотечение от венозного?',
-    options: [
-      'Артериальное — алая кровь, сильная пульсирующая струя. Венозное — тёмная кровь, медленная струя',
-      'Артериальное — тёмная кровь, медленная струя. Венозное — алая, фонтан',
-      'Они не отличаются',
-      'Артериальное всегда сопровождается болью'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** **Артериальное** — самое опасное: алая, пульсирующая струя (счёт на секунды). **Венозное** — тёмно-вишнёвая, медленная струя (хватит давящей повязки). <br><br>❌ **Неверно:** Перепутать их — смертельно опасно.'
-  },
-  {
-    id: 'q14',
-    text: 'Где можно эффективно передавить артерию для остановки кровотечения? Выберите три места.',
-    options: [
-      'В области шеи (сонная артерия)',
-      'В подмышечной области',
-      'В области паха',
-      'Под коленом',
-      'В области локтевого сгиба'
-    ],
-    correctIndex: [0, 1, 2],
-    explanation: '✅ **Верно:** Артерию нужно прижимать к кости там, где она близко. Главные точки: **шея**, **подмышка**, **пах**. <br><br>❌ **Неверно:** Под коленом и в локтевом сгибе артерии не так близко к поверхности, давление будет неэффективным.'
-  },
-  {
-    id: 'q15',
-    text: 'Можно ли извлекать инородное тело (стекло, нож) из раны?',
-    options: [
-      'Да, чтобы остановить кровотечение',
-      'Нет, нельзя',
-      'Можно, но очень осторожно'
-    ],
-    correctIndex: 1,
-    explanation: '✅ **Верно:** Инородное тело — это **«пробка»**, сдерживающая массивное кровотечение. Вытащите — кровь хлынет. Кроме того, вы можете повредить сосуды и нервы. Его нужно зафиксировать бинтами и оставить хирургам. <br><br>❌ **Неверно:** Любая попытка извлечь предмет смертельно опасна.'
-  },
-  {
-    id: 'q16',
-    text: 'Нужно ли включать в состав аптечки марлевый бинт?',
-    options: [
-      'Да, это обязательно',
-      'Нет, достаточно пластыря'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** **Бинт — фундамент** первой помощи. Ни один пластырь не создаст давления для остановки серьёзного кровотечения. <br><br>❌ **Неверно:** Без бинта вам нечем давить на рану.'
-  },
-  // --- Тема 4. Агрессивная среда ---
-  {
-    id: 'q17',
-    text: 'Что нельзя делать, если грузоподъёмная машина попала под напряжение? Выберите три варианта.',
-    options: [
-      'Спускаться с неё на землю',
-      'Подниматься на неё до снятия напряжения',
-      'Прикасаться к ней',
-      'Дожидаться снятия напряжения'
-    ],
-    correctIndex: [0, 1, 2],
-    explanation: '✅ **Верно:** Нельзя **спускаться**, **подниматься** и **прикасаться**. Вы станете проводником тока. Единственное правильное действие — оставаться на месте и ждать обесточивания. <br><br>❌ **Неверно:** Дожидаться снятия напряжения — это правильно.'
-  },
-  {
-    id: 'q18',
-    text: 'Пострадавший получил удар током, но чувствует себя нормально и отказывается от скорой. Нужно ли её вызывать?',
-    options: [
-      'Да, обязательно',
-      'Нет, если он в сознании и говорит, что всё хорошо'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** **Вызов скорой обязателен всегда** при электротравме. Ток может вызвать фатальную аритмию спустя несколько часов. <br><br>❌ **Неверно:** «Нормальное» самочувствие — не гарантия. Последствия могут проявиться позже.'
-  },
-  {
-    id: 'q19',
-    text: 'В какой последовательности нужно осматривать пострадавшего при падении с высоты?',
-    options: [
-      'Голова → шея → грудь → живот → конечности',
-      'Ноги → руки → живот → голова',
-      'Сразу к сломанной ноге, если она видна'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Правило **«сверху вниз»**: сначала защищаем мозг (голова), затем спинной мозг (шея), потом грудь, живот и только в конце — конечности. <br><br>❌ **Неверно:** Бросаться к сломанной ноге — «туннельное зрение». Перелом ноги не убьёт за минуту, а перелом шеи — убьёт.'
-  },
-  {
-    id: 'q20',
-    text: 'Как правильно промывать глаза при химическом ожоге?',
-    options: [
-      'От переносицы к виску',
-      'От виска к переносице',
-      'Не промывать, просто наложить повязку'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Промывать нужно **от носа к периферии** (от переносицы к виску), чтобы ядовитая вода не стекала на второй, здоровый глаз. <br><br>❌ **Неверно:** Мыть в обратном направлении — сжечь второй глаз. Не промывать — продолжать ожог.'
-  },
-  {
-    id: 'q21',
-    text: 'Что нужно сделать при обморожении? Выберите два верных варианта.',
-    options: [
-      'Переместить в тепло, дать тёплое питьё',
-      'Укрыть повреждённые места ватой/одеялом, наложить повязку',
-      'Растереть снегом или шерстью',
-      'Опустить в горячую воду'
-    ],
-    correctIndex: [0, 1],
-    explanation: '✅ **Верно:** Согревать нужно **изнутри** (тёплое питьё) и **медленно** снаружи (укутать). <br><br>❌ **Неверно:** Растирать снегом или горячей водой — **категорически нельзя**. Это сварит мёртвые ткани и вызовет необратимые повреждения.'
-  },
-  // --- Тема 5. Инородное тело ---
-  {
-    id: 'q22',
-    text: 'Что нужно сделать для извлечения инородного тела из дыхательных путей у взрослого?',
-    options: [
-      'Наклонить, ударить несколько раз ладонью по спине. Если не помогло — приём Геймлиха (толчки в живот)',
-      'Сильно ударить кулаком по спине',
-      'Вызвать рвоту, надавив на корень языка'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Сначала **наклонить** и ударить **основанием ладони** (не кулаком!) по спине. Если не помогло — **приём Геймлиха** (резкие толчки внутрь и вверх под рёбра). <br><br>❌ **Неверно:** Бить кулаком по вертикальной спине — загнать предмет глубже. Вызывать рвоту — забить дыхательные пути рвотными массами.'
-  },
-  {
-    id: 'q23',
-    text: 'Какая особенность есть при спасении ребёнка старше 1 года (приём Геймлиха)?',
-    options: [
-      'Нужно дозировать силу ударов и толчков, проверять результат после каждого удара',
-      'Нужно бить со всей взрослой силы',
-      'Нельзя наклонять ребёнка'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Дети — не уменьшенные копии взрослых. Силу нужно **строго дозировать**, а после каждого удара **проверять**, не вылетел ли предмет. <br><br>❌ **Неверно:** Бить со всей силы — сломать рёбра. Не наклонять — предмет не выйдет.'
-  },
-  {
-    id: 'q24',
-    text: 'Можно ли бить по спине подавившегося человека, если он сидит прямо?',
-    options: [
-      'Нет, это загнать предмет ещё глубже',
-      'Да, это помогает'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Бить по спине сидящего прямо человека **нельзя**. От удара по вертикальной трахее предмет провалится глубже. **Сначала наклоните** его вперёд. <br><br>❌ **Неверно:** Это опасный миф.'
-  },
-  // --- Дополнительные вопросы (из теста и для расширения) ---
-  {
-    id: 'q25',
-    text: 'Кто вправе оказывать первую помощь?',
-    options: [
-      'Любой человек',
-      'Только человек с медицинским образованием',
-      'Только тот, кто обязан по закону'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Первую помощь вправе оказывать **любой человек**. Это не медицина, а простейшие действия по удержанию жизни до приезда врачей. <br><br>❌ **Неверно:** Диплом хирурга для этого не нужен.'
-  },
-  {
-    id: 'q26',
-    text: 'Можно ли оказывать первую помощь без разрешения пострадавшего?',
-    options: [
-      'Можно, только если он без сознания и не может ответить',
-      'Можно всегда, разрешение не нужно',
-      'Нельзя никогда'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Работает правило **«подразумеваемого согласия»**: человек без сознания «согласен» на спасение. Если в сознании — **спросите разрешения**. <br><br>❌ **Неверно:** Игнорировать сознательного человека нельзя.'
-  },
-  {
-    id: 'q27',
-    text: 'Что нужно сообщить диспетчеру скорой? Выберите два правильных ответа.',
-    options: [
-      'Адрес места происшествия',
-      'Количество пострадавших',
-      'Диагноз пострадавшего',
-      'Время происшествия'
-    ],
-    correctIndex: [0, 1],
-    explanation: '✅ **Верно:** Самые критичные пункты — **точный адрес** и **количество пострадавших**. Если пострадавших трое, а приедет одна бригада, врачам придётся выбирать, кого спасать. <br><br>❌ **Неверно:** Диагноз по телефону не ставят.'
-  },
-  {
-    id: 'q28',
-    text: 'Соотнесите термин и определение: «Ссадина» — это...',
-    options: [
-      'Неглубокие раны с повреждением только поверхностных слоёв кожи, нанесённые плоским предметом на большом протяжении',
-      'Глубокое нарушение целости кожи с повреждением тканей и органов',
-      'Потеря крови из-за повреждения сосудов'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** **Ссадина** — поверхностное повреждение (например, «асфальтная болезнь»). <br><br>❌ **Неверно:** Глубокое нарушение — это **рана**. Потеря крови — это **кровотечение**.'
-  },
-  {
-    id: 'q29',
-    text: 'Соотнесите вид отравления и путь проникновения: «Отравление газом» — это...',
-    options: [
-      'Через дыхательные пути',
-      'Через пищеварительный тракт',
-      'Через кожу и слизистые'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Газ попадает через **дыхательные пути**. <br><br>❌ **Неверно:** Через пищеварительный тракт — пищевое отравление. Через кожу — химическое.'
-  },
-  {
-    id: 'q30',
-    text: 'Что нужно сделать после того, как вы спасли подавившегося ребёнка?',
-    options: [
-      'Вызвать скорую для осмотра, даже если всё хорошо',
-      'Ничего, можно отпустить'
-    ],
-    correctIndex: 0,
-    explanation: '✅ **Верно:** Трахея могла быть травмирована. **Врачи обязаны осмотреть** спасённого. <br><br>❌ **Неверно:** «Всё хорошо» — субъективно. Последствия могут проявиться позже.'
-  }
-];
-
-/* ════════════════════════════════════════════════════════════
-   2. КОНФИГУРАЦИЯ
-════════════════════════════════════════════════════════════ */
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdNZP-aaxv3eR6hjS3RP_7pm5IC67DBTbA0oL0MDqojiEbZVtoG3qSzLEyvm10VlG5sA/exec'; // Ваш URL
-const PASS_THRESHOLD = 0.85;
-const TOTAL_QUESTIONS = 20; // Сколько вопросов выпадает на тест
-
-/* ════════════════════════════════════════════════════════════
-   3. СОСТОЯНИЕ (без изменений)
-════════════════════════════════════════════════════════════ */
-// ... (state остаётся тем же) ...
-
-// НОВОЕ: массив выбранных вопросов и перемешанных вариантов
-let currentQuiz = []; // { ...question, shuffledOptions: [{text, originalIndex}] }
-let currentQuestionIndex = 0;
-let answers = []; // массив выбранных originalIndex
-
-/* ════════════════════════════════════════════════════════════
-   4. DOM-ССЫЛКИ (без изменений)
-════════════════════════════════════════════════════════════ */
-// ... (все getElementById остаются) ...
-
-// НОВОЕ: элемент для объяснения
-const explanationBox = document.createElement('div');
-explanationBox.className = 'explanation-box';
-explanationBox.id = 'explanation-box';
-// Вставим его после optionsList в questionCard
-// (это можно сделать в renderQuestion или сразу после инициализации DOM)
-
-/* ════════════════════════════════════════════════════════════
-   5. УПРАВЛЕНИЕ СЦЕНАМИ (без изменений)
-════════════════════════════════════════════════════════════ */
-// ... (showScene остаётся) ...
-
-/* ════════════════════════════════════════════════════════════
-   6-7. СОГЛАСИЕ И ФОРМА (без изменений)
-════════════════════════════════════════════════════════════ */
-// ... (логика consent и validateForm остаётся) ...
-
-/* ════════════════════════════════════════════════════════════
-   8. ЛОГИКА ТЕСТА (ПЕРЕРАБОТАНА)
-════════════════════════════════════════════════════════════ */
-
-/**
- * Перемешивание массива (алгоритм Фишера-Йетса)
- */
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-/**
- * Подготовка теста: выбор 20 случайных вопросов и перемешивание вариантов
- */
-function startQuiz() {
-  // 1. Перемешиваем банк и берём первые 20
-  const shuffledBank = shuffleArray(QUESTION_BANK);
-  const selected = shuffledBank.slice(0, TOTAL_QUESTIONS);
-
-  // 2. Для каждого вопроса перемешиваем варианты
-  currentQuiz = selected.map(q => {
-    const shuffledOptions = shuffleArray(q.options.map((text, idx) => ({
-      text,
-      originalIndex: idx
-    })));
-    return {
-      ...q,
-      shuffledOptions
-    };
-  });
-
-  currentQuestionIndex = 0;
-  answers = new Array(TOTAL_QUESTIONS).fill(null); // null = не отвечен
-  renderQuestion(0);
-}
-
-/**
- * Отображение вопроса
- */
-function renderQuestion(index) {
-  const q = currentQuiz[index];
-  const num = index + 1;
-
-  quizCounter.textContent = `Вопрос ${num} из ${TOTAL_QUESTIONS}`;
-  const pct = (index / TOTAL_QUESTIONS) * 100;
-  progressBarFill.style.width = pct + '%';
-  progressBarTrack.setAttribute('aria-valuenow', String(index));
-
-  questionNumber.textContent = 'Вопрос ' + String(num).padStart(2, '0');
-  questionText.textContent = q.text;
-
-  optionsList.innerHTML = '';
-  explanationBox.style.display = 'none'; // Скрываем объяснение при новом вопросе
-  explanationBox.innerHTML = '';
-
-  // Проверяем, множественный ли выбор (correctIndex — массив)
-  const isMultiple = Array.isArray(q.correctIndex);
-
-  q.shuffledOptions.forEach((opt, optIdx) => {
-    const label = document.createElement('label');
-    label.className = 'option-label';
-    label.setAttribute('for', `opt-${index}-${optIdx}`);
-
-    const input = document.createElement('input');
-    if (isMultiple) {
-      input.type = 'checkbox';
-      input.name = `q${index}`;
-      input.className = 'option-checkbox';
-    } else {
-      input.type = 'radio';
-      input.name = `q${index}`;
-      input.className = 'option-radio';
+    /* Стили для блока объяснения */
+    .explanation-box {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border-left: 5px solid #1a5fa8;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #1a202c;
+      animation: fadeIn 0.3s ease;
     }
-    input.id = `opt-${index}-${optIdx}`;
-    input.value = String(opt.originalIndex);
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .explanation-status {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .explanation-status.correct { color: #16a34a; }
+    .explanation-status.incorrect { color: #dc2626; }
 
-    // Восстанавливаем состояние, если уже отвечали (при возврате, но у нас линейный тест)
-    // if (answers[index] && answers[index].includes(opt.originalIndex)) input.checked = true;
+    /* Стили для чекбоксов (множественный выбор) */
+    .option-checkbox { display: none; }
+    .option-checkbox-marker {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border: 2px solid #e2e8f0;
+      border-radius: 6px;
+      transition: border-color 0.18s ease, background 0.18s ease;
+      position: relative;
+      margin-top: 1px;
+    }
+    .option-checkbox:checked + .option-checkbox-marker {
+      background: #1a5fa8;
+      border-color: #1a5fa8;
+    }
+    .option-checkbox:checked + .option-checkbox-marker::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 7px;
+      height: 12px;
+      border: 2.5px solid #fff;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+    }
+    .option-label:has(.option-checkbox:checked) {
+      border-color: #1a5fa8;
+      background: #dbeafe;
+    }
 
-    input.addEventListener('change', () => onOptionSelect(index, opt.originalIndex, isMultiple));
+    /* Стили для правильных/неправильных ответов после проверки */
+    .option-label.is-correct { 
+      border-color: #16a34a !important; 
+      background: #dcfce7 !important; 
+    }
+    .option-label.is-incorrect { 
+      border-color: #dc2626 !important; 
+      background: #fee2e2 !important; 
+    }
+    .option-label.is-correct .option-marker { 
+      border-color: #16a34a !important; 
+      background: #16a34a !important; 
+    }
+    .option-label.is-correct .option-checkbox-marker { 
+      border-color: #16a34a !important; 
+      background: #16a34a !important; 
+    }
 
-    const marker = document.createElement('span');
-    marker.className = isMultiple ? 'option-checkbox-marker' : 'option-marker';
-    marker.setAttribute('aria-hidden', 'true');
+    /* Блокировка кликов после ответа */
+    .option-label:has(input:disabled) { 
+      cursor: default; 
+      pointer-events: none; 
+      opacity: 0.9; 
+    }
 
-    const textSpan = document.createElement('span');
-    textSpan.className = 'option-text';
-    textSpan.textContent = opt.text;
+    /* Кнопка "Назад" (сохранена из оригинала) */
+    .back-to-course {
+      position: fixed; top: 16px; left: 16px; z-index: 9000;
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; padding: 8px 14px; background: rgba(255, 255, 255, 0.9);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 99px;
+      color: #475569; font-family: inherit; font-size: 0.85rem;
+      font-weight: 600; line-height: 1; text-decoration: none;
+      white-space: nowrap; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+      transition: all 0.2s ease; -webkit-tap-highlight-color: transparent;
+    }
+    .back-to-course:hover, .back-to-course:focus-visible {
+      background: #ffffff; color: #2563eb; border-color: #2563eb;
+      transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.2);
+      outline: none;
+    }
+    .back-to-course svg { flex-shrink: 0; transition: transform 0.2s ease; }
+    .back-to-course:hover svg { transform: translateX(-2px); }
+    
+    @media (max-width: 640px) {
+      .back-to-course {
+        top: 10px; left: 10px; padding: 7px 10px; font-size: 0.75rem;
+        gap: 4px; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.12);
+      }
+      .back-to-course svg { width: 14px; height: 14px; }
+    }
+    @media (max-width: 380px) {
+      .back-to-course { padding: 0; width: 38px; height: 38px; }
+      .back-to-course-text { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Кнопка возврата к курсу -->
+  <a href="https://demoonstars.github.io/ot-training-portal/course-first-aid.html"
+     class="back-to-course"
+     aria-label="Вернуться к материалам курса">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    <span class="back-to-course-text">К курсу</span>
+  </a>
 
-    label.appendChild(input);
-    label.appendChild(marker);
-    label.appendChild(textSpan);
-    optionsList.appendChild(label);
-  });
+  <!-- СЦЕНА 1: Приветствие -->
+  <section id="scene-welcome" class="scene active" aria-label="Приветствие" role="main">
+    <div class="scene-inner welcome-inner">
+      <div class="welcome-icon" aria-hidden="true">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="40" fill="#dcfce7"/>
+          <path d="M40 20V60M20 40H60" stroke="#16a34a" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="welcome-title">Итоговый тест: Первая помощь</h1>
+      <p class="welcome-subtitle">Проверьте свои знания алгоритмов спасения жизни</p>
+      <p class="welcome-description">
+        Этот тест предназначен для закрепления знаний по курсу «Первая помощь без мифов и паники». 
+        В тесте собраны реальные рабочие ситуации. Внимательно читайте объяснения после каждого ответа, чтобы запомнить, как действовать правильно.
+      </p>
+      <div class="welcome-meta">
+        <div class="meta-item"><span class="meta-icon" aria-hidden="true">📋</span><span>20 вопросов</span></div>
+        <div class="meta-item"><span class="meta-icon" aria-hidden="true">✅</span><span>Порог сдачи — 85%</span></div>
+        <div class="meta-item"><span class="meta-icon" aria-hidden="true">⏱</span><span>~15 минут</span></div>
+      </div>
+      <button class="btn btn-primary btn-large" id="btn-start" type="button">
+        Начать тест <span class="btn-arrow" aria-hidden="true">→</span>
+      </button>
+    </div>
+  </section>
 
-  // Вставляем explanationBox после optionsList (если ещё не вставлен)
-  if (!optionsList.parentNode.querySelector('.explanation-box')) {
-    optionsList.parentNode.appendChild(explanationBox);
-  }
+  <!-- СЦЕНА 2: Согласие на обработку ПДн -->
+  <section id="scene-consent" class="scene" aria-label="Согласие на обработку персональных данных" role="main">
+    <div class="scene-inner">
+      <div class="scene-header">
+        <div class="step-badge">Шаг 1 из 3</div>
+        <h2 class="scene-title">Согласие на обработку персональных данных</h2>
+      </div>
+      <div class="consent-box" role="document" aria-label="Текст согласия">
+        <h3 class="consent-box-title">Уважаемый участник тестирования!</h3>
+        <p>В соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных»
+        настоящим подтверждаю своё согласие на обработку моих персональных данных
+        (фамилия, имя, отчество, дата рождения, наименование организации, должность,
+        подразделение, дата трудоустройства) в целях:</p>
+        <ul>
+          <li>проведения тестирования по оказанию первой помощи;</li>
+          <li>записи и хранения результатов тестирования;</li>
+          <li>подтверждения факта прохождения инструктажа.</li>
+        </ul>
+        <p>Обработка персональных данных осуществляется в объёме, необходимом для достижения
+        указанных целей. Данные хранятся в защищённой электронной системе и не передаются
+        третьим лицам без вашего согласия, за исключением случаев, предусмотренных
+        действующим законодательством РФ.</p>
+        <p>Согласие может быть отозвано в любой момент путём письменного обращения
+        к ответственному за безопасность.</p>
+      </div>
+      <label class="consent-check-label" for="consent-checkbox">
+        <input type="checkbox" id="consent-checkbox" class="consent-checkbox" aria-describedby="consent-desc" />
+        <span class="consent-check-custom" aria-hidden="true"></span>
+        <span id="consent-desc">Я ознакомился(-ась) с условиями и даю согласие на обработку моих персональных данных</span>
+      </label>
+      <button class="btn btn-primary btn-large" id="btn-consent-continue" type="button" disabled aria-disabled="true">
+        Продолжить <span class="btn-arrow" aria-hidden="true">&#x2192;</span>
+      </button>
+    </div>
+  </section>
 
-  // Кнопка "Далее" неактивна, пока не выбран ответ
-  btnNext.disabled = true;
-  btnNext.setAttribute('aria-disabled', 'true');
-  btnNextLabel.textContent = (index === TOTAL_QUESTIONS - 1) ? 'Завершить тест' : 'Далее';
-}
+  <!-- СЦЕНА 3: Ввод персональных данных -->
+  <section id="scene-form" class="scene" aria-label="Ввод персональных данных" role="main">
+    <div class="scene-inner">
+      <div class="scene-header">
+        <div class="step-badge">Шаг 2 из 3</div>
+        <h2 class="scene-title">Персональные данные</h2>
+        <p class="scene-subtitle">Заполните все поля. Они необходимы для сохранения результатов.</p>
+      </div>
+      <form id="user-form" novalidate aria-label="Форма персональных данных">
+        <div class="form-grid">
+          <div class="form-group form-group-full">
+            <label class="form-label" for="input-fullname">ФИО <span class="required-star" aria-hidden="true">*</span></label>
+            <input type="text" id="input-fullname" class="form-input" placeholder="Иванов Иван Иванович" autocomplete="name" aria-required="true" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-org">Организация <span class="required-star" aria-hidden="true">*</span></label>
+            <input type="text" id="input-org" class="form-input" placeholder="ООО «Название»" autocomplete="organization" aria-required="true" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-position">Должность <span class="required-star" aria-hidden="true">*</span></label>
+            <input type="text" id="input-position" class="form-input" placeholder="Инженер" aria-required="true" />
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label" for="input-department">Подразделение <span class="required-star" aria-hidden="true">*</span></label>
+            <input type="text" id="input-department" class="form-input" placeholder="Производственный отдел" aria-required="true" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-birthdate">Дата рождения <span class="required-star" aria-hidden="true">*</span></label>
+            <input type="date" id="input-birthdate" class="form-input" aria-required="true" max="2007-12-31" min="1940-01-01" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-hiredate">Дата трудоустройства <span class="required-star" aria-hidden="true">*</span></label>
+            <input type="date" id="input-hiredate" class="form-input" aria-required="true" min="1990-01-01" />
+          </div>
+        </div>
+        <p class="form-required-note"><span class="required-star" aria-hidden="true">*</span> — обязательные поля</p>
+        <button class="btn btn-primary btn-large" id="btn-form-submit" type="button" disabled aria-disabled="true">
+          Перейти к тесту <span class="btn-arrow" aria-hidden="true">&#x2192;</span>
+        </button>
+      </form>
+    </div>
+  </section>
 
-/**
- * Обработка выбора ответа
- */
-function onOptionSelect(qIdx, originalIndex, isMultiple) {
-  if (isMultiple) {
-    // Для чекбоксов: собираем все выбранные
-    const checked = Array.from(optionsList.querySelectorAll('input:checked'))
-      .map(inp => parseInt(inp.value, 10));
-    answers[qIdx] = checked;
-  } else {
-    // Для радио: один выбор
-    answers[qIdx] = [originalIndex];
-  }
+  <!-- СЦЕНА 4: Тестирование -->
+  <section id="scene-quiz" class="scene" aria-label="Тестирование" role="main">
+    <div class="scene-inner quiz-inner">
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-info">
+          <span class="step-badge">Шаг 3 из 3</span>
+          <span class="quiz-counter" id="quiz-counter" aria-live="polite">Вопрос 1 из 20</span>
+        </div>
+        <div class="progress-bar-track" role="progressbar"
+          aria-valuemin="0" aria-valuemax="20" aria-valuenow="0" id="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+      </div>
+      <div class="question-card" id="question-card">
+        <p class="question-number" id="question-number" aria-hidden="true">Вопрос 01</p>
+        <h2 class="question-text" id="question-text"></h2>
+        <!-- Список вариантов ответа -->
+        <div class="options-list" id="options-list" role="group" aria-labelledby="question-text"></div>
+        <!-- Блок для обучающего объяснения -->
+        <div class="explanation-box" id="explanation-box" style="display: none;"></div>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn btn-primary btn-large" id="btn-next" type="button" disabled aria-disabled="true">
+          <span id="btn-next-label">Ответить</span>
+          <span class="btn-arrow" aria-hidden="true">&#x2192;</span>
+        </button>
+      </div>
+    </div>
+  </section>
 
-  // Активируем кнопку "Далее"
-  btnNext.disabled = false;
-  btnNext.setAttribute('aria-disabled', 'false');
+  <!-- СЦЕНА 5: Результат -->
+  <section id="scene-result" class="scene" aria-label="Результат тестирования" role="main">
+    <div class="scene-inner result-inner">
+      <div class="result-icon-wrap" id="result-icon-wrap" aria-hidden="true"></div>
+      <h2 class="result-title" id="result-title"></h2>
+      <p class="result-text" id="result-text"></p>
+      <div class="result-score-wrap">
+        <div class="result-score-circle" id="result-score-circle">
+          <svg class="score-ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="score-ring-bg" cx="60" cy="60" r="50"/>
+            <circle class="score-ring-fill" id="score-ring-fill" cx="60" cy="60" r="50"
+              stroke-dasharray="314" stroke-dashoffset="314"/>
+          </svg>
+          <div class="score-ring-label">
+            <span class="score-number" id="score-number">0</span>
+            <span class="score-total">из 20</span>
+          </div>
+        </div>
+        <div class="result-stats">
+          <div class="stat-item">
+            <span class="stat-label">Правильных ответов</span>
+            <span class="stat-value" id="stat-correct">&#x2014;</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Результат</span>
+            <span class="stat-value" id="stat-percent">&#x2014;</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Статус</span>
+            <span class="stat-value stat-status" id="stat-status">&#x2014;</span>
+          </div>
+        </div>
+      </div>
+      <div class="submit-status" id="submit-status" aria-live="polite"></div>
+      <div class="result-actions">
+        <button class="btn btn-secondary btn-large" id="btn-retry" type="button">
+          Пройти заново
+        </button>
+      </div>
+    </div>
+  </section>
 
-  // НЕМЕДЛЕННО показываем объяснение (обучающий момент)
-  showExplanation(qIdx);
-}
-
-/**
- * Показ объяснения после ответа
- */
-function showExplanation(qIdx) {
-  const q = currentQuiz[qIdx];
-  const userAnswer = answers[qIdx]; // массив originalIndex
-
-  // Проверяем правильность
-  const correctIndices = Array.isArray(q.correctIndex) ? q.correctIndex : [q.correctIndex];
-  const isCorrect = userAnswer.length === correctIndices.length &&
-                    userAnswer.every(idx => correctIndices.includes(idx));
-
-  // Формируем HTML
-  let html = '';
-  if (isCorrect) {
-    html += `<p class="explanation-status correct">✅ <strong>Верно!</strong></p>`;
-  } else {
-    html += `<p class="explanation-status incorrect">❌ <strong>Неверно.</strong></p>`;
-  }
-  html += `<p>${q.explanation}</p>`;
-
-  explanationBox.innerHTML = html;
-  explanationBox.style.display = 'block';
-  explanationBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-/**
- * Переход к следующему вопросу
- */
-function goToNextQuestion() {
-  const cur = currentQuestionIndex;
-  if (cur < TOTAL_QUESTIONS - 1) {
-    questionCard.classList.add('leaving');
-    setTimeout(() => {
-      questionCard.classList.remove('leaving');
-      currentQuestionIndex = cur + 1;
-      renderQuestion(currentQuestionIndex);
-    }, 250);
-  } else {
-    showResults();
-  }
-}
-
-/* ════════════════════════════════════════════════════════════
-   9. РЕЗУЛЬТАТЫ (адаптировано под multiple choice)
-════════════════════════════════════════════════════════════ */
-function calculateResult() {
-  let correct = 0;
-  currentQuiz.forEach((q, idx) => {
-    const userAnswer = answers[idx] || [];
-    const correctIndices = Array.isArray(q.correctIndex) ? q.correctIndex : [q.correctIndex];
-    const isCorrect = userAnswer.length === correctIndices.length &&
-                      userAnswer.every(i => correctIndices.includes(i));
-    if (isCorrect) correct++;
-  });
-  const percent = Math.round((correct / TOTAL_QUESTIONS) * 100);
-  const passed = (correct / TOTAL_QUESTIONS) >= PASS_THRESHOLD;
-  return { correct, percent, passed };
-}
-
-// ... (showResults остаётся, но использует calculateResult) ...
-
-/* ════════════════════════════════════════════════════════════
-   10-13. ОСТАЛЬНОЕ (без изменений)
-════════════════════════════════════════════════════════════ */
-// ... (sendResultsToGoogleSheets, resetApp, обработчики, init) ...
+  <script src="app.js"></script>
+</body>
+</html>
